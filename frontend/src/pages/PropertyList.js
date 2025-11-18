@@ -2,52 +2,52 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 
-// AI-generated: Property listing page with API data fetching
-// Reason: Display all available properties from the backend
-// Verified: Tested API calls and data rendering
-// Learned: How to use React hooks (useState, useEffect) to manage component state
+// AI-generated: Parking spot listing page with API data fetching
+// Reason: Display all available parking spots from backend (implements Booking Management subsystem)
+// Verified: Tested API calls and spot rendering
+// Learned: How to fetch and display real-time parking availability
 
-function PropertyList() {
-  const [properties, setProperties] = useState([]);
+function ParkingSpotList() {
+  const [spots, setSpots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchProperties();
+    fetchParkingSpots();
   }, []);
 
-  const fetchProperties = async () => {
+  const fetchParkingSpots = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/properties');
-      setProperties(response.data);
+      const response = await axios.get('http://localhost:5000/api/parkingspots');
+      setSpots(response.data);
       setLoading(false);
     } catch (err) {
-      setError('Failed to load properties');
+      setError('Failed to load parking spots');
       setLoading(false);
     }
   };
 
   return (
     <div className="page">
-      <h1>Available Properties</h1>
-      <Link to="/create-property" className="btn">Add New Property</Link>
+      <h1>Available Parking Spots in Oakland</h1>
+      <Link to="/list" className="btn">List Your Parking Spot</Link>
 
-      {loading && <p>Loading properties...</p>}
+      {loading && <p>Loading parking spots...</p>}
       {error && <p className="error">{error}</p>}
 
       <div className="properties-grid">
-        {properties.length === 0 ? (
-          <p>No properties available yet. Be the first to add one!</p>
+        {spots.length === 0 ? (
+          <p>No parking spots available yet. Be the first to list one!</p>
         ) : (
-          properties.map((property) => (
-            <div key={property._id} className="property-card">
-              <h2>{property.title}</h2>
-              <p><strong>Address:</strong> {property.address}</p>
-              <p><strong>Price:</strong> ${property.price}/month</p>
-              <p><strong>Bedrooms:</strong> {property.bedrooms} | <strong>Bathrooms:</strong> {property.bathrooms}</p>
-              <p><strong>Owner:</strong> {property.ownerName}</p>
-              <p><strong>Contact:</strong> {property.contactEmail}</p>
-              <Link to={`/properties/${property._id}`} className="btn">View Details</Link>
+          spots.map((spot) => (
+            <div key={spot._id} className="property-card">
+              <h2>{spot.title}</h2>
+              <p><strong>Address:</strong> {spot.address}</p>
+              <p><strong>Price per Hour:</strong> ${spot.pricePerHour} | <strong>Per Day:</strong> ${spot.pricePerDay}</p>
+              <p><strong>Owner:</strong> {spot.ownerName}</p>
+              <p><strong>Rating:</strong> ⭐ {spot.averageRating.toFixed(1)}</p>
+              <p><strong>Contact:</strong> {spot.contactEmail}</p>
+              <Link to={`/spots/${spot._id}`} className="btn">View & Book</Link>
             </div>
           ))
         )}
@@ -56,4 +56,4 @@ function PropertyList() {
   );
 }
 
-export default PropertyList;
+export default ParkingSpotList;

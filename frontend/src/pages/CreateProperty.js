@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-// AI-generated: Create property form component
-// Reason: Allow users to submit new property listings
-// Verified: Tested form submission and database creation
-// Learned: How to handle form data and redirect after submission
+// AI-generated: List parking spot form component for SpaceOwners
+// Reason: Allow space owners to list parking spots (implements Parking Spot System)
+// Verified: Tested form submission and parking spot creation
+// Learned: How to handle geolocation data and pricing tiers
 
-function CreateProperty() {
+function ListParkingSpot() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     address: '',
-    price: '',
-    bedrooms: '',
-    bathrooms: '',
+    latitude: '',
+    longitude: '',
+    pricePerHour: '',
+    pricePerDay: '',
     ownerName: '',
     contactEmail: ''
   });
@@ -36,11 +37,11 @@ function CreateProperty() {
     setLoading(true);
 
     try {
-      await axios.post('http://localhost:5000/api/properties', formData);
-      alert('Property created successfully!');
-      navigate('/properties');
+      await axios.post('http://localhost:5000/api/parkingspots', formData);
+      alert('Parking spot listed successfully! Start earning money!');
+      navigate('/spots');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to create property');
+      setError(err.response?.data?.error || 'Failed to list parking spot');
     } finally {
       setLoading(false);
     }
@@ -49,20 +50,21 @@ function CreateProperty() {
   return (
     <div className="page">
       <div className="form-container">
-        <h1>List a New Property</h1>
+        <h1>List Your Parking Spot</h1>
+        <p>Earn money from your unused driveway or garage space</p>
         {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>
           <input
             type="text"
             name="title"
-            placeholder="Property Title"
+            placeholder="Parking Spot Title (e.g., Driveway in Oakland)"
             value={formData.title}
             onChange={handleChange}
             required
           />
           <textarea
             name="description"
-            placeholder="Property Description"
+            placeholder="Description (e.g., covered spot, near Pitt campus, easy access)"
             value={formData.description}
             onChange={handleChange}
             rows="4"
@@ -71,39 +73,51 @@ function CreateProperty() {
           <input
             type="text"
             name="address"
-            placeholder="Address"
+            placeholder="Full Address"
             value={formData.address}
             onChange={handleChange}
             required
           />
           <input
             type="number"
-            name="price"
-            placeholder="Price (per month)"
-            value={formData.price}
+            name="latitude"
+            placeholder="Latitude (e.g., 40.4406)"
+            step="0.0001"
+            value={formData.latitude}
             onChange={handleChange}
             required
           />
           <input
             type="number"
-            name="bedrooms"
-            placeholder="Number of Bedrooms"
-            value={formData.bedrooms}
+            name="longitude"
+            placeholder="Longitude (e.g., -79.9959)"
+            step="0.0001"
+            value={formData.longitude}
             onChange={handleChange}
             required
           />
           <input
             type="number"
-            name="bathrooms"
-            placeholder="Number of Bathrooms"
-            value={formData.bathrooms}
+            name="pricePerHour"
+            placeholder="Price per Hour ($)"
+            step="0.50"
+            value={formData.pricePerHour}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="number"
+            name="pricePerDay"
+            placeholder="Price per Day ($)"
+            step="0.50"
+            value={formData.pricePerDay}
             onChange={handleChange}
             required
           />
           <input
             type="text"
             name="ownerName"
-            placeholder="Owner Name"
+            placeholder="Your Name"
             value={formData.ownerName}
             onChange={handleChange}
             required
@@ -117,7 +131,7 @@ function CreateProperty() {
             required
           />
           <button type="submit" disabled={loading}>
-            {loading ? 'Creating...' : 'Create Property'}
+            {loading ? 'Listing...' : 'List Parking Spot'}
           </button>
         </form>
       </div>
@@ -125,4 +139,4 @@ function CreateProperty() {
   );
 }
 
-export default CreateProperty;
+export default ListParkingSpot;

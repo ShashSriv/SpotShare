@@ -1,25 +1,31 @@
 import React from 'react';
 
+// AI-generated: Home page reflecting SpotShare parking booking platform
+// Reason: Showcase platform value for both renters and space owners
+// Verified: Page displays correctly with all features
+// Learned: How to create compelling landing page messaging
+
 function Home() {
   return (
     <div className="page">
-      <h1>Welcome to ParkPanther Solutions</h1>
-      <p>Find your perfect residential home with ease.</p>
+      <h1>Welcome to SpotShare 🅿️</h1>
+      <p>Find reliable parking spots in Oakland or earn money by sharing your space!</p>
       <div className="home-content">
         <div className="feature">
-          <h2>🔍 Search Properties</h2>
-          <p>Browse available residential properties in your area.</p>
+          <h2>🔍 Find Available Spots</h2>
+          <p>Search nearby parking spots by location, price, and availability. Book instantly with secure payments.</p>
         </div>
         <div className="feature">
-          <h2>🔐 Secure Authentication</h2>
-          <p>Create an account and manage your property listings securely.</p>
+          <h2>💰 Earn from Your Space</h2>
+          <p>List your parking spot and earn money from unused driveway or garage space during work hours.</p>
         </div>
         <div className="feature">
-          <h2>📧 Connect with Owners</h2>
-          <p>Get in touch with property owners directly through our platform.</p>
+          <h2>⭐ Trusted Community</h2>
+          <p>User ratings and reviews ensure safety and reliability for both renters and space owners.</p>
         </div>
       </div>
-      <a href="/properties" className="btn">Start Browsing</a>
+      <a href="/spots" className="btn">Find Parking Spots</a>
+      <a href="/list" className="btn">List Your Space</a>
     </div>
   );
 }
