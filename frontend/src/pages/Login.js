@@ -6,7 +6,7 @@ import axios from 'axios';
 // Verified: Tested form submission and JWT token storage
 // Learned: How to handle form state and make API requests with Axios
 
-function Login() {
+function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,13 +18,17 @@ function Login() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', {
+      const response = await axios.post('http://localhost:5001/api/auth/login', {
         email,
         password
       });
 
-      localStorage.setItem('token', response.data.token);
-      alert('Login successful! Token: ' + response.data.token);
+      // Call parent handler to update App state
+      if (onLogin) {
+        onLogin(response.data.user, response.data.token);
+      }
+
+      alert('Login successful!');
       setEmail('');
       setPassword('');
     } catch (err) {

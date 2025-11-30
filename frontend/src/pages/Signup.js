@@ -6,7 +6,7 @@ import axios from 'axios';
 // Verified: Tested form submission and user creation in database
 // Learned: How to handle form validation and API error responses
 
-function Signup() {
+function Signup({ onLogin }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,14 +19,18 @@ function Signup() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/signup', {
+      const response = await axios.post('http://localhost:5001/api/auth/signup', {
         name,
         email,
         password
       });
 
-      localStorage.setItem('token', response.data.token);
-      alert('Account created successfully! Token: ' + response.data.token);
+      // Call parent handler to update App state
+      if (onLogin) {
+        onLogin(response.data.user, response.data.token);
+      }
+
+      alert('Account created successfully!');
       setName('');
       setEmail('');
       setPassword('');
