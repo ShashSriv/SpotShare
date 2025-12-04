@@ -22,17 +22,7 @@ function ParkingSpotDetail() {
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
 
-  useEffect(() => {
-    fetchSpot();
-  }, [id]);
-
-  useEffect(() => {
-    if (spot && spot.spaceOwner) {
-      fetchReviews();
-    }
-  }, [spot]);
-
-  const fetchSpot = async () => {
+  const fetchSpot = React.useCallback(async () => {
     try {
       const response = await axios.get(`http://localhost:5001/api/parkingspots/${id}`);
       setSpot(response.data);
@@ -41,9 +31,10 @@ function ParkingSpotDetail() {
       setError('Failed to load parking spot');
       setLoading(false);
     }
-  };
+  }, [id]);
 
-  const fetchReviews = async () => {
+  const fetchReviews = React.useCallback(async () => {
+    if (!spot || !spot.spaceOwner) return;
     try {
       // Fetch reviews for the space owner
       const response = await axios.get(`http://localhost:5000/api/reviews/${spot.spaceOwner}`);
@@ -51,7 +42,17 @@ function ParkingSpotDetail() {
     } catch (err) {
       console.error('Failed to load reviews', err);
     }
-  };
+  }, [spot]);
+
+  useEffect(() => {
+    fetchSpot();
+  }, [fetchSpot]);
+
+  useEffect(() => {
+    if (spot && spot.spaceOwner) {
+      fetchReviews();
+    }
+  }, [spot, fetchReviews]);
 
   const handleBooking = async (e) => {
     e.preventDefault();
