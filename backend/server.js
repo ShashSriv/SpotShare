@@ -24,7 +24,7 @@ let mockUsers = [
     _id: 'mock_user_1',
     name: 'Demo User',
     email: 'demo@example.com',
-    password: '$2a$10$hashedpassword', // Mock hashed password
+    password: 'password123', // Mock hashed password
     userType: 'renter'
   },
   {

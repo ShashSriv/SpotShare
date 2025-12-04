@@ -19,6 +19,11 @@ function ParkingSpotList() {
   const { showToast } = useToast();
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = '/login';
+      return;
+    }
     fetchParkingSpots();
     const savedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
     setFavorites(savedFavorites);
