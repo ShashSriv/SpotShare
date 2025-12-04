@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useToast } from '../context/ToastContext';
+import SkeletonCard from '../components/SkeletonCard';
 
 // AI-generated: Parking spot listing page with API data fetching
 // Reason: Display all available parking spots from backend (implements Booking Management subsystem)
@@ -13,13 +15,19 @@ function ParkingSpotList() {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('price_asc');
+  const [favorites, setFavorites] = useState([]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     fetchParkingSpots();
+    const savedFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    setFavorites(savedFavorites);
   }, []);
 
   const fetchParkingSpots = async () => {
     try {
+      // Simulate network delay to show skeleton
+      await new Promise(resolve => setTimeout(resolve, 1000));
       const response = await axios.get('http://localhost:5001/api/parkingspots');
       setSpots(response.data);
       setLoading(false);
@@ -27,6 +35,19 @@ function ParkingSpotList() {
       setError('Failed to load parking spots');
       setLoading(false);
     }
+  };
+
+  const toggleFavorite = (spotId) => {
+    let newFavorites;
+    if (favorites.includes(spotId)) {
+      newFavorites = favorites.filter(id => id !== spotId);
+      showToast('Removed from favorites', 'info');
+    } else {
+      newFavorites = [...favorites, spotId];
+      showToast('Added to favorites', 'success');
+    }
+    setFavorites(newFavorites);
+    localStorage.setItem('favorites', JSON.stringify(newFavorites));
   };
 
   // Filter and Sort Logic
@@ -72,16 +93,27 @@ function ParkingSpotList() {
         </select>
       </div>
 
-      {loading && <p>Loading parking spots...</p>}
       {error && <p className="error">{error}</p>}
 
       <div className="properties-grid">
-        {filteredSpots.length === 0 ? (
+        {loading ? (
+          // Show 6 skeleton cards while loading
+          [...Array(6)].map((_, i) => <SkeletonCard key={i} />)
+        ) : filteredSpots.length === 0 ? (
           <p>No parking spots found matching your search.</p>
         ) : (
           filteredSpots.map((spot) => (
             <div key={spot._id} className="property-card">
-              <h2>{spot.title}</h2>
+              <div className="card-header">
+                <h2>{spot.title}</h2>
+                <button
+                  className={`heart-btn ${favorites.includes(spot._id) ? 'active' : ''}`}
+                  onClick={() => toggleFavorite(spot._id)}
+                  aria-label={favorites.includes(spot._id) ? "Remove from favorites" : "Add to favorites"}
+                >
+                  ♥
+                </button>
+              </div>
               <p><strong>Address:</strong> {spot.address}</p>
               <p><strong>Price per Hour:</strong> ${spot.pricePerHour} | <strong>Per Day:</strong> ${spot.pricePerDay}</p>
               <p><strong>Owner:</strong> {spot.ownerName}</p>
