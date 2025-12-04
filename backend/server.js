@@ -558,9 +558,33 @@ app.put('/api/bookings/:id', async (req, res) => {
 // Learned: How to track payment status for confirmation
 
 // Create payment for booking
+// Create payment for booking
 app.post('/api/payments', async (req, res) => {
   try {
     const { booking, renter, spaceOwner, amount } = req.body;
+
+    // Mock Payment if DB not connected
+    if (mongoose.connection.readyState !== 1) {
+      console.log('MongoDB not connected, using in-memory payments');
+      const newPayment = {
+        _id: 'mock_payment_' + Date.now(),
+        booking, renter, spaceOwner, amount,
+        status: 'pending',
+        createdAt: new Date()
+      };
+      mockPayments.push(newPayment);
+
+      // Simulate confirmation
+      setTimeout(() => {
+        const p = mockPayments.find(mp => mp._id === newPayment._id);
+        if (p) {
+          p.status = 'completed';
+          p.completedAt = new Date();
+        }
+      }, 1000);
+
+      return res.status(201).json(newPayment);
+    }
 
     const payment = new Payment({
       booking,
